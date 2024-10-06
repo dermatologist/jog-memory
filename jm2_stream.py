@@ -7,7 +7,8 @@ from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 from langchain_text_splitters import CharacterTextSplitter
 import tqdm
 
-discharge_summaries = pd.read_csv('data/discharge_sample.csv')
+df = pd.read_csv('data/discharge_sample.csv')
+discharge_summaries = df.sample(n=3)
 subject_ids = discharge_summaries['subject_id'].unique()
 main_concepts = pd.read_csv('data/main_concepts.csv')
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
@@ -30,9 +31,9 @@ prompt_templates = [
     # dialogue style template with a system prompt
     (
         "You are a clinician summarizing a patient's discharge summary. "
-        "Summarize the following text in one paragraph for the main theme: {concept}\n"
         "Do not include your tasks or instructions.\n"
         "Do not include names, dates, or other identifying information.\n"
+        "Summarize the following text in one paragraph for the main theme: {concept}\n"
         "Text: {prompt}\n"
         "Summary::"
     ),
@@ -56,7 +57,7 @@ def stream_data(subject_id):
 
 # Step 2: Map documents into a summary < 2500 characters
 summaries = []
-excluded = [10000826, 10000032]
+excluded = [10000826, 10000032, 10000980, 10001186]
 for subject_id in tqdm.tqdm(subject_ids):
     if subject_id in excluded:
         continue
@@ -70,5 +71,5 @@ for subject_id in tqdm.tqdm(subject_ids):
         print("---------------------------------------------------------------")
 
     summaries.append([subject_id, summary])
-df = pd.DataFrame(summaries, columns=['subject_id', 'mapped_summary'])
+df = pd.DataFrame(summaries, columns=['subject_id', 'text'])
 df.to_csv('data/mapped_summaries.csv', index=False)
