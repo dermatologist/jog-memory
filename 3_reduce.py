@@ -69,6 +69,6 @@ for subject_id in tqdm.tqdm(subject_ids):
         print(f"Subject ID: {subject_id}, Concept: {concept}, Length: {len(summary)}")
         print("---------------------------------------------------------------")
 
-    summaries.append([subject_id, summary])
-df = pd.DataFrame(summaries, columns=['subject_id', 'text'])
-df.to_csv('data/level2_summaries.csv', index=False)
+    summaries.append([subject_id, summary, concept])
+df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'concept'])
+df.to_csv('data/reduced_summaries.csv', index=False)

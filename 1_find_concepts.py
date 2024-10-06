@@ -7,7 +7,8 @@ from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 from langchain_text_splitters import CharacterTextSplitter
 
 
-discharge_summaries = pd.read_csv('data/discharge_sample.csv')
+df = pd.read_csv('data/discharge_sample.csv')
+discharge_summaries = df.sample(n=5)
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
 model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-4k-instruct", device_map="auto")
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
@@ -44,8 +45,8 @@ for index, row in discharge_summaries.iterrows():
             )
             concept = response[0]["generated_text"].split("::")[-1].strip().split("\n")[0]
             print(f"Subject ID: {subject_id}, Main Concept: {concept}")
-            main_concepts.append([subject_id, concept])
-df = pd.DataFrame(main_concepts, columns=['subject_id', 'concept'])
+            main_concepts.append([subject_id, concept, row["text"]])
+df = pd.DataFrame(main_concepts, columns=['subject_id', 'concept', 'text'])
 df.to_csv('data/main_concepts.csv', index=False)
 
 

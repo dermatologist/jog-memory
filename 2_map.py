@@ -7,8 +7,7 @@ from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 from langchain_text_splitters import CharacterTextSplitter
 import tqdm
 
-df = pd.read_csv('data/discharge_sample.csv')
-discharge_summaries = df.sample(n=5)
+discharge_summaries = pd.read_csv('data/main_concepts.csv')
 subject_ids = discharge_summaries['subject_id'].unique()
 main_concepts = pd.read_csv('data/main_concepts.csv')
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
@@ -70,6 +69,6 @@ for subject_id in tqdm.tqdm(subject_ids):
         print(f"Subject ID: {subject_id}, Concept: {concept}, Length: {len(summary)}")
         print("---------------------------------------------------------------")
 
-    summaries.append([subject_id, summary])
-df = pd.DataFrame(summaries, columns=['subject_id', 'text'])
+    summaries.append([subject_id, summary, concept])
+df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'concept'])
 df.to_csv('data/mapped_summaries.csv', index=False)
