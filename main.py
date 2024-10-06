@@ -37,11 +37,11 @@ prompt_templates = [
 for index, row in discharge_summaries.iterrows():
     print(row['subject_id'])
     print("--------------------")
-    user_input = row['text'].replace('\n', ' ').strip()
+    user_input = row['text']
     text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
-        chunk_size=1000, chunk_overlap=0
+        chunk_size=1000, chunk_overlap=10
     )
-    split_docs = text_splitter.split_documents(user_input)
+    split_docs = text_splitter.split_text(user_input)
     print(f"Generated {len(split_docs)} documents.")
     user_input = user_input[:3000]  # limit the length of the input to 500 characters
     responses = generator(
