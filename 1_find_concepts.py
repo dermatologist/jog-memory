@@ -8,8 +8,8 @@ from langchain_text_splitters import CharacterTextSplitter
 
 
 discharge_summaries = pd.read_csv('data/discharge_sample.csv')
-tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
-model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct", device_map="auto")
+tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
+model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-4k-instruct", device_map="auto")
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
 prompt_templates = [

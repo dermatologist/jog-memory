@@ -31,7 +31,7 @@ prompt_templates = [
     (
         "You are a clinician summarizing a patient's discharge summary. "
         "Do not include your tasks or instructions.\n"
-        "Do not include names, dates, or other identifying information.\n"
+        "Do not include name, date, or other identifying information.\n"
         "Summarize the following text in one paragraph for the main theme: {concept}\n"
         "Text: {prompt}\n"
         "Summary::"

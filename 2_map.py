@@ -8,7 +8,7 @@ from langchain_text_splitters import CharacterTextSplitter
 import tqdm
 
 df = pd.read_csv('data/discharge_sample.csv')
-discharge_summaries = df.sample(n=3)
+discharge_summaries = df.sample(n=5)
 subject_ids = discharge_summaries['subject_id'].unique()
 main_concepts = pd.read_csv('data/main_concepts.csv')
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
@@ -32,7 +32,7 @@ prompt_templates = [
     (
         "You are a clinician summarizing a patient's discharge summary. "
         "Do not include your tasks or instructions.\n"
-        "Do not include names, dates, or other identifying information.\n"
+        "Do not include name, date, or other identifying information.\n"
         "Summarize the following text in one paragraph for the main theme: {concept}\n"
         "Text: {prompt}\n"
         "Summary::"
