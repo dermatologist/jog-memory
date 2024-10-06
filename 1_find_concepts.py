@@ -9,15 +9,15 @@ from langchain_text_splitters import CharacterTextSplitter
 
 df = pd.read_csv('data/discharge_sample.csv')
 discharge_summaries = df.sample(n=5)
-tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
-model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-4k-instruct", device_map="auto")
+tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
+model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct", device_map="auto")
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
 prompt_templates = [
     # Identify the main concept in the text
     (
         "You are a clinician reviewing a patient's discharge summary. "
-        "Identify the main diagnostic or procedure concept in the text in one or two words.\n"
+        "Identify the main diagnosis and/or procedure in the text in one or two words.\n"
         "Example: pneumonia, hernia repair\n"
         "Text: {prompt}\n"
         "Main concept::"

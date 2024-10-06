@@ -10,8 +10,8 @@ import tqdm
 discharge_summaries = pd.read_csv('data/mapped_summaries.csv')
 subject_ids = discharge_summaries['subject_id'].unique()
 main_concepts = pd.read_csv('data/main_concepts.csv')
-tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-4k-instruct")
-model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-4k-instruct",
+tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
+model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct",
                                              device_map="auto",
                                             #  attn_implementation="flash_attention_2",
                                             #  torch_dtype=torch.float16
