@@ -16,9 +16,14 @@ generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 prompt_templates = [
     # Identify the main concept in the text
     (
-        "You are a clinician reviewing a patient's discharge summary. "
+        "You are a clinician reviewing a patient's discharge summary. \n"
+        "Do not include your tasks or instructions.\n"
         "Identify the main diagnosis and/or procedure in the text in one or two words.\n"
-        "Example: pneumonia, hernia repair\n"
+        "Examples:\n\n"
+        "Text: The patient was admitted for pneumonia.\n"
+        "Main concept:: pneumonia \n"
+        "Text: The patient underwent hernia repair.\n"
+        "Main concept:: hernia repair\n\n"
         "Text: {prompt}\n"
         "Main concept::"
     ),
