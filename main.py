@@ -43,13 +43,18 @@ for index, row in discharge_summaries.iterrows():
     )
     split_docs = text_splitter.split_text(user_input)
     print(f"Generated {len(split_docs)} documents.")
-    user_input = user_input[:3000]  # limit the length of the input to 500 characters
-    responses = generator(
-        [template.format(prompt=user_input) for template in prompt_templates], max_new_tokens=256
-    )
-    for idx, response in enumerate(responses):
-        print(f"Response to Template #{idx}:")
-        reply = response[0]["generated_text"].split("::")[-1].strip()
-        line = reply.split("\n")[0]
-        print(line + "\n\n\n")
+    # user_input = user_input[:3000]  # limit the length of the input to 500 characters
+    summary = ""
+    for doc in split_docs:
+        # print(doc)
+        responses = generator(
+            [template.format(prompt=doc) for template in prompt_templates], max_new_tokens=256
+        )
+        for idx, response in enumerate(responses):
+            print(f"Response to Template #{idx}:")
+            reply = response[0]["generated_text"].split("::")[-1].strip()
+            line = reply.split("\n")[0]
+            print(line)
+            summary += line + "\n"
+    print(f'Summary: {summary}')
     print("--------------------")
