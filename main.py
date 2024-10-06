@@ -4,6 +4,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 import time
 import torch
 from accelerate import init_empty_weights, load_checkpoint_and_dispatch
+from langchain_text_splitters import CharacterTextSplitter
 
 
 discharge_summaries = pd.read_csv('data/discharge_sample.csv')
@@ -37,6 +38,11 @@ for index, row in discharge_summaries.iterrows():
     print(row['subject_id'])
     print("--------------------")
     user_input = row['text'].replace('\n', ' ').strip()
+    text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=1000, chunk_overlap=0
+    )
+    split_docs = text_splitter.split_documents(user_input)
+    print(f"Generated {len(split_docs)} documents.")
     user_input = user_input[:3000]  # limit the length of the input to 500 characters
     responses = generator(
         [template.format(prompt=user_input) for template in prompt_templates], max_new_tokens=256
