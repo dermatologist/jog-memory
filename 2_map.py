@@ -23,7 +23,6 @@ prompt_templates = [
         "Do not include your tasks or instructions.\n"
         "Do not include name, date, or other identifying information.\n"
         "Summarize the following text in one paragraph for the main theme: {concept}\n"
-        "Mention if any of the following are present: {expanded_concepts}\n"
         "Text: {prompt}\n"
         "Summary::"
     ),
@@ -32,23 +31,29 @@ prompt_templates = [
         "Do not include your tasks or instructions.\n"
         "Do not include name, date, or other identifying information.\n"
         "Summarize the following text in one paragraph for the main theme: {concept}\n"
+        "Mention if any of the following are present: {expanded_concepts}\n"
         "Text: {prompt}\n"
         "Summary::"
     ),
 ]
 
 # https://huggingface.co/docs/transformers/pipeline_tutorial
-def stream_data(subject_id):
+def stream_data(subject_id, idx=1):
     docs = []
     for index, notes in discharge_summaries[discharge_summaries['subject_id'] == subject_id].iterrows():
         discharge_note = notes['text']
         concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
+        expanded_concepts = str(discharge_summaries[discharge_summaries['subject_id'] == subject_id]['expanded_concepts'].values[0])
+        print(f"Subject ID: {subject_id}, Concept: {concept}, Expanded Concepts: {expanded_concepts}")
         text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
             chunk_size=1280, chunk_overlap=5
         )
         split_docs = text_splitter.split_text(discharge_note)
         for doc in split_docs:
-            docs.append(prompt_templates[1].format(concept=concept, prompt=doc))
+            if idx == 0:
+                docs.append(prompt_templates[0].format(concept=concept, prompt=doc))
+            else:
+                docs.append(prompt_templates[1].format(concept=concept, prompt=doc, expanded_concepts=expanded_concepts))
     for doc in docs:
         yield doc
 
