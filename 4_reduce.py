@@ -40,7 +40,10 @@ prompt_templates = [
 def stream_data(subject_id, idx=1):
     docs = []
     for index, notes in discharge_summaries[discharge_summaries['subject_id'] == subject_id].iterrows():
-        discharge_note = notes['text']
+        if idx == 0:
+            discharge_note = notes['text']
+        else:
+            discharge_note = notes['jog_memory']
         concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
         expanded_concepts = str(main_concepts[main_concepts['subject_id'] == subject_id]['expanded_concepts'].values[0])
         print(f"Subject ID: {subject_id}, Concept: {concept}, Expanded Concepts: {expanded_concepts}")

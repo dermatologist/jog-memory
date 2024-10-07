@@ -5,7 +5,7 @@ from huggingface_hub import snapshot_download
 from gensim.models import Word2Vec
 import accelerate
 
-df = pd.read_csv('data/discharge_sample.csv')
+df = pd.read_csv('data/discharge_5000.csv')
 discharge_summaries = df.sample(n=5)
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
 model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct", device_map="auto")

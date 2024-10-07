@@ -40,7 +40,10 @@ prompt_templates = [
 def stream_data(subject_id, idx=1):
     docs = []
     for index, notes in discharge_summaries[discharge_summaries['subject_id'] == subject_id].iterrows():
-        discharge_note = notes['text']
+        if idx == 0:
+            discharge_note = notes['text']
+        else:
+            discharge_note = notes['jog_memory']
         concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
         expanded_concepts = str(main_concepts[main_concepts['subject_id'] == subject_id]['expanded_concepts'].values[0])
         print(f"Subject ID: {subject_id}, Concept: {concept}, Expanded Concepts: {expanded_concepts}")
@@ -66,6 +69,12 @@ for subject_id in tqdm.tqdm(subject_ids):
     concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
     summary = ["", ""]
     for idx in range(2):
+        if idx == 0 and len (discharge_summaries[discharge_summaries['subject_id'] == subject_id]['text'].values[0]) < 2000:
+            summary[idx] = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['text'].values[0]
+            continue
+        if idx == 1 and len (discharge_summaries[discharge_summaries['subject_id'] == subject_id]['jog_memory'].values[0]) < 2000:
+            summary[idx] = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['jog_memory'].values[0]
+            continue
         for response in generator(stream_data(subject_id, idx), max_new_tokens=128):
             full_response = response[0]["generated_text"].split("::")[-1]
             summary[idx] += full_response.split("##")[0].strip() + "\n" # remove the system prompt that gets appended
