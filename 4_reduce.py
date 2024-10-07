@@ -5,7 +5,7 @@ from langchain_text_splitters import CharacterTextSplitter
 import tqdm
 import accelerate
 
-discharge_summaries = pd.read_csv('data/reduced_summaries.csv')
+discharge_summaries = pd.read_csv('data/map2_summaries.csv')
 main_concepts = pd.read_csv('data/main_concepts.csv')
 subject_ids = discharge_summaries['subject_id'].unique()
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
@@ -58,6 +58,7 @@ def stream_data(subject_id, idx=1):
 # Step 2: Map documents into a summary < 2500 characters
 summaries = []
 excluded = [10000826, 10000032, 10000980, 10001186]
+print("Reducing discharge summaries...")
 for subject_id in tqdm.tqdm(subject_ids):
     if subject_id in excluded:
         continue
@@ -72,5 +73,17 @@ for subject_id in tqdm.tqdm(subject_ids):
             print("---------------------------------------------------------------")
 
     summaries.append([subject_id, summary[0], summary[1], concept])
+    content = f"""
+    Subject ID: {subject_id} | Concept: {concept}
+
+    Default Summary:
+    {summary[0]}
+
+    JOG Memory Summary:
+    {summary[1]}
+    """
+
+    with open('data/report.txt', 'a') as f:
+        f.write(content)
 df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'jog_memory', 'concept'])
 df.to_csv('data/final_summaries.csv', index=False)

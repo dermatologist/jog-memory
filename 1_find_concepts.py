@@ -61,6 +61,7 @@ prompt_templates = [
 subject_id = 0
 concept = ""
 main_concepts = []
+print("Identifying main concepts in discharge summaries...")
 for index, row in discharge_summaries.iterrows():
         if subject_id != row['subject_id']:
             subject_id = row['subject_id']

@@ -63,6 +63,7 @@ def stream_data(subject_id, idx=1):
 # Step 2: Map documents into a summary < 2500 characters
 summaries = []
 excluded = [10000826, 10000032, 10000980, 10001186]
+print("Mapping discharge summaries...(2)")
 for subject_id in tqdm.tqdm(subject_ids):
     if subject_id in excluded:
         continue
@@ -84,4 +85,4 @@ for subject_id in tqdm.tqdm(subject_ids):
 
     summaries.append([subject_id, summary[0], summary[1], concept])
 df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'jog_memory', 'concept'])
-df.to_csv('data/reduced_summaries.csv', index=False)
+df.to_csv('data/map2_summaries.csv', index=False)
