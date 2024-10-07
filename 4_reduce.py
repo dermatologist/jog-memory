@@ -36,6 +36,18 @@ prompt_templates = [
     ),
 ]
 
+def trim_after_last_period(sentence):
+    # Find the last occurrence of a period
+    last_period_index = sentence.rfind('.')
+
+    # If a period is found, trim the sentence after the last period
+    if last_period_index != -1:
+        return sentence[:last_period_index + 1]
+    else:
+        # If no period is found, return the original sentence
+        return sentence
+
+
 # https://huggingface.co/docs/transformers/pipeline_tutorial
 def stream_data(subject_id, idx=1):
     docs = []
@@ -65,7 +77,7 @@ for subject_id in tqdm.tqdm(subject_ids):
     concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
     summary = ["", ""]
     for idx in range(2):
-        for response in generator(stream_data(subject_id, idx), max_new_tokens=128):
+        for response in generator(stream_data(subject_id, idx), max_new_tokens=200):
             full_response = response[0]["generated_text"].split("::")[-1]
             summary[idx] += full_response.split("##")[0].strip() + "\n" # remove the system prompt that gets appended
             print(full_response.split("##")[0].strip(), "\n")
@@ -77,10 +89,10 @@ for subject_id in tqdm.tqdm(subject_ids):
     Subject ID: {subject_id} | Concept: {concept}
 
     Default Summary:
-    {summary[0]}
+    {trim_after_last_period(summary[0])}
 
     JOG Memory Summary:
-    {summary[1]}
+    {trim_after_last_period(summary[1])}
     """
 
     with open('data/report.txt', 'a') as f:
