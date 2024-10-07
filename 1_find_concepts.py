@@ -72,7 +72,8 @@ for index, row in discharge_summaries.iterrows():
             concept = response[0]["generated_text"].split("::")[-1].strip().split("\n")[0]
             expanded_concepts = expand_concept(concept.lower().strip().replace(" ", "_"))
             print(f"Subject ID: {subject_id}, Main Concept: {concept}, Expanded Concepts: {expanded_concepts}")
-            main_concepts.append([subject_id, concept, expanded_concepts, row["text"]])
+            if expanded_concepts:
+                main_concepts.append([subject_id, concept, expanded_concepts, row["text"]])
 df = pd.DataFrame(main_concepts, columns=['subject_id', 'concept', 'expanded_concepts', 'text'])
 df.to_csv('data/main_concepts.csv', index=False)
 
