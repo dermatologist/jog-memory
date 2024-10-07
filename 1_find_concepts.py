@@ -5,13 +5,38 @@ import time
 import torch
 from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 from langchain_text_splitters import CharacterTextSplitter
-
+from huggingface_hub import snapshot_download
+from gensim.models import Word2Vec
 
 df = pd.read_csv('data/discharge_sample.csv')
 discharge_summaries = df.sample(n=5)
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
 model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct", device_map="auto")
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
+
+REPO_ID = "garyw/clinical-embeddings-100d-w2v-cr"
+FILENAME = "w2v_OA_CR_100d.bin"
+word_embedding = Word2Vec.load(snapshot_download(repo_id=REPO_ID)+"/"+FILENAME)
+
+def expand_concept(_concept):
+    # if _concept is not a list, convert it to a list
+    if not isinstance(_concept, list):
+        concepts = [_concept]
+    else:
+        concepts = _concept
+    _words = []
+    phrases = []
+    for concept in concepts:
+        print(f"Concept: {concept}")
+        try:
+            _words.extend(word_embedding.wv.most_similar(concept, topn=10))
+        except:
+            pass
+    for (word, score) in _words:
+        print(f"Word: {word}, Score: {score}")
+        if score > 0.75:
+            phrases.append(word.replace("_", " "))
+    return phrases
 
 prompt_templates = [
     # Identify the main concept in the text
@@ -27,7 +52,6 @@ prompt_templates = [
         "Text: {prompt}\n"
         "Main concept::"
     ),
-    # dialogue style template with a system prompt
     (
         "You are a clinician summarizing a patient's discharge summary. "
         "Summarize the following text in one paragraph.\n"
@@ -49,9 +73,10 @@ for index, row in discharge_summaries.iterrows():
                 prompt_templates[0].format(prompt=discharge_note), max_new_tokens=256
             )
             concept = response[0]["generated_text"].split("::")[-1].strip().split("\n")[0]
-            print(f"Subject ID: {subject_id}, Main Concept: {concept}")
-            main_concepts.append([subject_id, concept, row["text"]])
-df = pd.DataFrame(main_concepts, columns=['subject_id', 'concept', 'text'])
+            expanded_concepts = expand_concept(concept.lower().strip().replace(" ", "_"))
+            print(f"Subject ID: {subject_id}, Main Concept: {concept}, Expanded Concepts: {expanded_concepts}")
+            main_concepts.append([subject_id, concept, expanded_concepts, row["text"]])
+df = pd.DataFrame(main_concepts, columns=['subject_id', 'concept', 'expanded_concepts', 'text'])
 df.to_csv('data/main_concepts.csv', index=False)
 
 
