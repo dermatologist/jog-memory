@@ -9,7 +9,6 @@ import tqdm
 
 discharge_summaries = pd.read_csv('data/main_concepts.csv')
 subject_ids = discharge_summaries['subject_id'].unique()
-main_concepts = pd.read_csv('data/main_concepts.csv')
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
 model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct",
                                              device_map="auto",
@@ -19,15 +18,15 @@ model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
 prompt_templates = [
-    # Identify the main concept in the text
     (
-        "You are a clinician reviewing a patient's discharge summary. "
-        "Identify two main concepts in the text separated by ,.\n"
+        "You are a clinician summarizing a patient's discharge summary. "
+        "Do not include your tasks or instructions.\n"
+        "Do not include name, date, or other identifying information.\n"
+        "Summarize the following text in one paragraph for the main theme: {concept}\n"
+        "Mention if any of the following are present: {expanded_concepts}\n"
         "Text: {prompt}\n"
-        "Main concepts::"
+        "Summary::"
     ),
-    # dialogue style template with a system prompt
-    # dialogue style template with a system prompt
     (
         "You are a clinician summarizing a patient's discharge summary. "
         "Do not include your tasks or instructions.\n"
@@ -43,7 +42,7 @@ def stream_data(subject_id):
     docs = []
     for index, notes in discharge_summaries[discharge_summaries['subject_id'] == subject_id].iterrows():
         discharge_note = notes['text']
-        concept = main_concepts[main_concepts['subject_id'] == subject_id]['concept'].values[0]
+        concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
         text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
             chunk_size=1280, chunk_overlap=5
         )
@@ -60,7 +59,7 @@ excluded = [10000826, 10000032, 10000980, 10001186]
 for subject_id in tqdm.tqdm(subject_ids):
     if subject_id in excluded:
         continue
-    concept = main_concepts[main_concepts['subject_id'] == subject_id]['concept'].values[0]
+    concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
     summary = ""
     for response in generator(stream_data(subject_id), max_new_tokens=128):
         full_response = response[0]["generated_text"].split("::")[-1]
