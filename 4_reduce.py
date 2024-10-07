@@ -93,6 +93,8 @@ for subject_id in tqdm.tqdm(subject_ids):
 
     JOG Memory Summary:
     {trim_after_last_period(summary[1])}
+
+    ---------------------------------------------------------------
     """
 
     with open('data/report.txt', 'a') as f:
