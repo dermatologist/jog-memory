@@ -65,14 +65,15 @@ for subject_id in tqdm.tqdm(subject_ids):
     if subject_id in excluded:
         continue
     concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
-    summary = ""
-    for response in generator(stream_data(subject_id), max_new_tokens=128):
-        full_response = response[0]["generated_text"].split("::")[-1]
-        summary += full_response.split("##")[0].strip() + "\n" # remove the system prompt that gets appended
-        print(full_response.split("##")[0].strip(), "\n")
-        print(f"Subject ID: {subject_id}, Concept: {concept}, Length: {len(summary)}")
-        print("---------------------------------------------------------------")
+    summary = ["", ""]
+    for idx in range(2):
+        for response in generator(stream_data(subject_id, idx), max_new_tokens=128):
+            full_response = response[0]["generated_text"].split("::")[-1]
+            summary[idx] += full_response.split("##")[0].strip() + "\n" # remove the system prompt that gets appended
+            print(full_response.split("##")[0].strip(), "\n")
+            print(f"Subject ID: {subject_id}, Concept: {concept}, Length: {len(summary[idx])}, Index: {idx}")
+            print("---------------------------------------------------------------")
 
-    summaries.append([subject_id, summary, concept])
-df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'concept'])
+    summaries.append([subject_id, summary[0], summary[1], concept])
+df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'jog_memory', 'concept'])
 df.to_csv('data/mapped_summaries.csv', index=False)
