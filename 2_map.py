@@ -1,11 +1,9 @@
 import pandas as pd
 from transformers import pipeline
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
-import time
-import torch
-from accelerate import init_empty_weights, load_checkpoint_and_dispatch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from langchain_text_splitters import CharacterTextSplitter
 import tqdm
+import accelerate
 
 discharge_summaries = pd.read_csv('data/main_concepts.csv')
 subject_ids = discharge_summaries['subject_id'].unique()
