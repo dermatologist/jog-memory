@@ -1,12 +1,9 @@
 import pandas as pd
 from transformers import pipeline
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
-import time
-import torch
-from accelerate import init_empty_weights, load_checkpoint_and_dispatch
-from langchain_text_splitters import CharacterTextSplitter
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from huggingface_hub import snapshot_download
 from gensim.models import Word2Vec
+import accelerate
 
 df = pd.read_csv('data/discharge_sample.csv')
 discharge_summaries = df.sample(n=5)
