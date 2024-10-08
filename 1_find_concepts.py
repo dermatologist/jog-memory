@@ -1,11 +1,10 @@
-import pandas as pd
-from transformers import pipeline
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from huggingface_hub import snapshot_download
-from gensim.models import Word2Vec
 import accelerate
+import pandas as pd
+from gensim.models import Word2Vec
+from huggingface_hub import snapshot_download
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
-df = pd.read_csv('data/discharge_5000.csv')
+df = pd.read_csv('~/data/discharge_5000.csv')
 discharge_summaries = df.sample(n=15)
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
 model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct", device_map="auto")
@@ -76,6 +75,6 @@ for index, row in discharge_summaries.iterrows():
             if expanded_concepts:
                 main_concepts.append([subject_id, concept, expanded_concepts, row["text"]])
 df = pd.DataFrame(main_concepts, columns=['subject_id', 'concept', 'expanded_concepts', 'text'])
-df.to_csv('data/main_concepts.csv', index=False)
+df.to_csv('~/data/main_concepts.csv', index=False)
 
 

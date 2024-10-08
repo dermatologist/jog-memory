@@ -1,11 +1,10 @@
-import pandas as pd
-from transformers import pipeline
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from langchain_text_splitters import CharacterTextSplitter
-import tqdm
 import accelerate
+import pandas as pd
+import tqdm
+from langchain_text_splitters import CharacterTextSplitter
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
-discharge_summaries = pd.read_csv('data/main_concepts.csv')
+discharge_summaries = pd.read_csv('~/data/main_concepts.csv')
 subject_ids = discharge_summaries['subject_id'].unique()
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
 model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct",
@@ -75,4 +74,4 @@ for subject_id in tqdm.tqdm(subject_ids):
 
     summaries.append([subject_id, summary[0], summary[1], concept])
 df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'jog_memory', 'concept'])
-df.to_csv('data/mapped_summaries.csv', index=False)
+df.to_csv('~/data/mapped_summaries.csv', index=False)
