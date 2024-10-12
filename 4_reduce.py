@@ -5,6 +5,7 @@ from langchain_text_splitters import CharacterTextSplitter
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import re
 import random
+import os
 
 discharge_summaries = pd.read_csv('~/data/map2_summaries.csv')
 main_concepts = pd.read_csv('~/data/main_concepts.csv')
@@ -67,6 +68,22 @@ def stream_data(subject_id, idx=1):
     for doc in docs:
         yield doc
 
+# Anominize and save the summaries
+def anonymize(summary, concept):
+    first = random.choice([0,1])
+    second = 1 - first
+    content = f"""
+        Concept: {concept}
+
+        Summary A:
+        {trim_after_last_period(summary[first])}
+
+        Summary B:
+        {trim_after_last_period(summary[second])}
+
+        ---------------------------------------------------------------
+        """
+    return content
 
 # Step 2: Map documents into a summary < 2500 characters
 summaries = []
@@ -95,26 +112,11 @@ for subject_id in tqdm.tqdm(subject_ids):
 
     ---------------------------------------------------------------
     """
-    with open('~/data/report.txt', 'a') as f:
+    with open(os.environ['HOME'] + '/data/report.txt', 'a') as f:
         f.write(content)
 
-# step 3 Anominize and save the summaries
-def anonymize(summary, concept):
-    first = random.choice([0,1])
-    second = 1 - first
-    content = f"""
-        Concept: {concept}
-
-        Summary A:
-        {trim_after_last_period(summary[first])}
-
-        Summary B:
-        {trim_after_last_period(summary[second])}
-
-        ---------------------------------------------------------------
-        """
-    with open('~/data/report_anon.txt', 'a') as f:
-        f.write(content)
+    with open(os.environ['HOME'] + '/data/report_anon.txt', 'a') as f:
+        f.write(anonymize(summary, concept))
 
 df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'jog_memory', 'concept'])
 df.to_csv('~/data/final_summaries.csv', index=False)
