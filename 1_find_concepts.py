@@ -5,7 +5,7 @@ from huggingface_hub import snapshot_download
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 df = pd.read_csv('~/data/discharge_5000.csv')
-discharge_summaries = df.sample(n=15)
+discharge_summaries = df.sample(n=20)
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
 model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct", device_map="auto")
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
@@ -60,10 +60,13 @@ prompt_templates = [
 subject_id = 0
 concept = ""
 main_concepts = []
+excluded = [10000826, 10000032, 10000980, 10001186, 10038849]
 print("Identifying main concepts in discharge summaries...")
 for index, row in discharge_summaries.iterrows():
         if subject_id != row['subject_id']:
             subject_id = row['subject_id']
+            if subject_id in excluded:
+                continue
             concept = ""
             discharge_note = row['text'][:2500]
             response = generator(
