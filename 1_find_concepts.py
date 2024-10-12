@@ -5,7 +5,10 @@ from huggingface_hub import snapshot_download
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 df = pd.read_csv('~/data/discharge_5000.csv')
-discharge_summaries = df.sample(n=20)
+sample = df.sample(n=15) # 30
+unique_values = sample['subject_id'].value_counts()
+subject_id = unique_values[unique_values < 3].index # <3
+discharge_summaries = df[df['subject_id'].isin(subject_id)]
 tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
 model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct", device_map="auto")
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
