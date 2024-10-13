@@ -6,9 +6,12 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 df = pd.read_csv('~/data/discharge_5000.csv')
 sample = df.sample(n=500) # 30
-unique_values = sample['subject_id'].value_counts()
-subject_id = unique_values[unique_values == 2].index # <3
-subject_id.append(unique_values[unique_values == 3].index)
+# unique_values = sample['subject_id'].value_counts()
+# subject_id = unique_values[unique_values == 2].index # <3
+# subject_id.append(unique_values[unique_values == 3].index)
+
+subject_id = sample['subject_id'].unique()
+
 subject_id = subject_id[0:20]
 print(f"Subject IDs: {subject_id}")
 discharge_summaries = df[df['subject_id'].isin(subject_id)]
