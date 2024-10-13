@@ -46,7 +46,7 @@ def stream_data(subject_id, idx=1):
             chunk_size=1280, chunk_overlap=5
         )
         split_docs = text_splitter.split_text(discharge_note)
-        for doc in split_docs:
+        for doc in split_docs[:15]: # Limit to 15 chunks because of memory constraints
             if idx == 0:
                 docs.append(prompt_templates[0].format(concept=concept, prompt=doc))
             else:
@@ -58,7 +58,7 @@ def stream_data(subject_id, idx=1):
 # Step 2: Map documents into a summary < 2500 characters
 summaries = []
 print("Mapping discharge summaries...")
-for subject_id in tqdm.tqdm(subject_ids[:10]):
+for subject_id in tqdm.tqdm(subject_ids[:10]):  # Limit to 10 summaries
     concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
     summary = ["", ""]
     for idx in range(2):
