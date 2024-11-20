@@ -31,9 +31,9 @@ llm = LlamaCpp(
     model_path=model_path,  # Download the model file first
     n_gpu_layers=n_gpu_layers,
     n_batch=n_batch,
-    n_ctx=1024,  # The context window size
-    max_tokens=128,  # The maximum number of tokens to generate
-    temperature=0.1,  # The temperature for sampling
+    n_ctx=2048,  # The context window size
+    max_tokens=256,  # The maximum number of tokens to generate
+    temperature=0.3,  # The temperature for sampling
     callback_manager=callback_manager,
     verbose=True,  # Verbose is required to pass to the callback manager
 )
@@ -87,36 +87,46 @@ def anonymize(summary, concept):
         """
     return content
 
-# step 4: reduce the discharge summaries
-summaries = []
-print("Reducing discharge summaries...")
 for subject_id in tqdm(subject_ids):
-    concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
-    expanded_concepts = str(main_concepts[main_concepts['subject_id'] == subject_id]['expanded_concepts'].values[0])
-    simple_notes = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['text'].values[0]
-    expanded_notes = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['jog_memory'].values[0]
+    x = discharge_summaries[discharge_summaries['subject_id'] == subject_id]
+    print(x["concept"].values[0])
+    print("text")
+    print("====================================================")
+    print(x["text"].values[0])
+    print("jog_memory")
+    print("====================================================")
+    print(x["jog_memory"].values[0])
 
-    print(f"Subject ID: {subject_id}, Concept: {concept}, Expanded Concepts: {expanded_concepts}, Simple Notes: {simple_notes}, Expanded Notes: {expanded_notes}")
-    simple_summary = simple_llm_chain.invoke({"prompt": simple_notes, "concept": concept})
-    expanded_summary = expanded_llm_chain.invoke({"prompt": expanded_notes, "concept": concept, "expanded_concepts": expanded_concepts})
+# # step 4: reduce the discharge summaries
+# summaries = []
+# print("Reducing discharge summaries...")
+# for subject_id in tqdm(subject_ids):
+#     concept = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['concept'].values[0]
+#     expanded_concepts = str(main_concepts[main_concepts['subject_id'] == subject_id]['expanded_concepts'].values[0])
+#     simple_notes = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['text'].values[0]
+#     expanded_notes = discharge_summaries[discharge_summaries['subject_id'] == subject_id]['jog_memory'].values[0]
 
-    summaries.append([subject_id, simple_summary, expanded_summary, concept])
-    content = f"""
-    Subject ID: {subject_id} | Concept: {concept} | Expanded Concepts: {expanded_concepts}
+#     print(f"Subject ID: {subject_id}, Concept: {concept}, Expanded Concepts: {expanded_concepts}, Simple Notes: {simple_notes}, Expanded Notes: {expanded_notes}")
+#     simple_summary = simple_llm_chain.invoke({"prompt": simple_notes, "concept": concept})
+#     expanded_summary = expanded_llm_chain.invoke({"prompt": expanded_notes, "concept": concept, "expanded_concepts": expanded_concepts})
 
-    Default Summary:
-    {trim_after_last_period(simple_summary)}
+#     summaries.append([subject_id, simple_summary, expanded_summary, concept])
+#     content = f"""
+#     Subject ID: {subject_id} | Concept: {concept} | Expanded Concepts: {expanded_concepts}
 
-    JOG Memory Summary:
-    {trim_after_last_period(expanded_summary)}
+#     Default Summary:
+#     {trim_after_last_period(simple_summary)}
 
-    ---------------------------------------------------------------
-    """
-    with open(os.environ['HOME'] + '/data/report.txt', 'a') as f:
-        f.write(content)
+#     JOG Memory Summary:
+#     {trim_after_last_period(expanded_summary)}
 
-    with open(os.environ['HOME'] + '/data/report_anon.txt', 'a') as f:
-        f.write(anonymize([simple_summary, expanded_summary], concept))
+#     ---------------------------------------------------------------
+#     """
+#     with open(os.environ['HOME'] + '/data/report.txt', 'a') as f:
+#         f.write(content)
 
-df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'jog_memory', 'concept'])
-df.to_csv('~/data/final_summaries.csv', index=False)
+#     with open(os.environ['HOME'] + '/data/report_anon.txt', 'a') as f:
+#         f.write(anonymize([simple_summary, expanded_summary], concept))
+
+# df = pd.DataFrame(summaries, columns=['subject_id', 'text', 'jog_memory', 'concept'])
+# df.to_csv('~/data/final_summaries.csv', index=False)
