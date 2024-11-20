@@ -4,3 +4,4 @@ pandas
 transformers
 langchain[all]
 accelerate
+chromadb

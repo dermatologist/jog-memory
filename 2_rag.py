@@ -15,8 +15,8 @@ logging.getLogger("langchain_text_splitters.base").setLevel(logging.ERROR)
 
 discharge_summaries = pd.read_csv('~/data/main_concepts.csv')
 subject_ids = discharge_summaries['subject_id'].unique()
-# tokenizer = AutoTokenizer.from_pretrained("microsoft/Phi-3-mini-128k-instruct")
-# model = AutoModelForCausalLM.from_pretrained("microsoft/Phi-3-mini-128k-instruct",
+# tokenizer = AutoTokenizer.from_pretrained("KrithikV/MedMobile")
+# model = AutoModelForCausalLM.from_pretrained("KrithikV/MedMobile",
 #                                              device_map="auto",
 #                                             #  attn_implementation="flash_attention_2",
 #                                             #  torch_dtype=torch.float16
