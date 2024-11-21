@@ -44,6 +44,9 @@ class JogMemory:
             verbose=True,  # Verbose is required to pass to the callback manager
         )
         self.theme_prompt = theme_prompt
+        REPO_ID = "garyw/clinical-embeddings-100d-w2v-cr"
+        FILENAME = "w2v_OA_CR_100d.bin"
+        self.word_embedding = Word2Vec.load(snapshot_download(repo_id=REPO_ID)+"/"+FILENAME)
 
     def append_text(self, text):
         self.tempfile.write(text)
@@ -55,6 +58,26 @@ class JogMemory:
     def clear_text(self):
         self.tempfile.seek(0)
         self.tempfile.truncate()
+
+    def expand_concept(self, concept):
+        # if _concept is not a list, convert it to a list
+        if not isinstance(concept, list):
+            concepts = [concept]
+        else:
+            concepts = concept
+        words = []
+        phrases = []
+        for concept in concepts:
+            print(f"Concept: {concept}")
+            try:
+                words.extend(self.word_embedding.wv.most_similar(concept, topn=10))
+            except:
+                pass
+        for (word, score) in words:
+            print(f"Word: {word}, Score: {score}")
+            if score > 0.75:
+                phrases.append(word.replace("_", " "))
+        return phrases
 
     def get_theme_prompt(self):
         if self.theme_prompt:
