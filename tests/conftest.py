@@ -12,5 +12,5 @@ import pytest
 
 @pytest.fixture
 def jm_fixture():
-    from src.jog_memory.jmclass import JogMemory
+    from src.jog_memory.jm import JogMemory
     return JogMemory()
