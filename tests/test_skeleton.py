@@ -1,6 +1,6 @@
 import pytest
 
-from jog_memory.skeleton import fib, main
+from src.jog_memory.skeleton import fib, main
 
 __author__ = "Bell Eapen"
 __copyright__ = "Bell Eapen"
