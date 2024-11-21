@@ -7,4 +7,10 @@
     - https://docs.pytest.org/en/stable/writing_plugins.html
 """
 
-# import pytest
+import pytest
+
+
+@pytest.fixture
+def jm_fixture():
+    from src.jog_memory.jmclass import JogMemory
+    return JogMemory()
