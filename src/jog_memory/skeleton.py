@@ -24,7 +24,7 @@ import argparse
 import logging
 import sys
 
-from jog_memory import __version__
+from . import __version__
 
 __author__ = "Bell Eapen"
 __copyright__ = "Bell Eapen"
