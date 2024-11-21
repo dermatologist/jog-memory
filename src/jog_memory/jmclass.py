@@ -96,6 +96,7 @@ class JogMemory:
 
     def clear_concept(self):
         self.concept = None
+        self.expanded_concepts = []
 
     def set_concept(self, concept):
         self.concept = concept
