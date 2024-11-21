@@ -47,6 +47,7 @@ class JogMemory:
         REPO_ID = "garyw/clinical-embeddings-100d-w2v-cr"
         FILENAME = "w2v_OA_CR_100d.bin"
         self.word_embedding = Word2Vec.load(snapshot_download(repo_id=REPO_ID)+"/"+FILENAME)
+        self.concept = None
 
     def append_text(self, text):
         self.tempfile.write(text)
@@ -83,9 +84,8 @@ class JogMemory:
         if self.theme_prompt:
             return self.theme_prompt
         return """
-        You are a clinician reviewing a patient's discharge summary.
-        Do not include your tasks or instructions.
         Identify the main diagnosis and/or procedure in the text in one or two words.
+        DO NOT include anything else in the response.
         Examples:
         Text: The patient was admitted for pneumonia.
         Main concept: pneumonia
@@ -93,6 +93,24 @@ class JogMemory:
         Main concept: hernia repair
         Text: {prompt}
         Main concept: """
+
+    def clear_concept(self):
+        self.concept = None
+
+    def set_concept(self, concept):
+        self.concept = concept
+
+    def get_concept(self):
+        return self.concept
+
+    def find_concept(self):
+        prompt = PromptTemplate.from_template(self.get_theme_prompt())
+        llm_chain = prompt | self.llm
+        text = self.get_text()[:self.n_ctx - 300]
+        output = llm_chain.invoke({"prompt": text})
+        self.clear_concept()
+        self.set_concept(output.split('\n', 1)[0].strip())
+        return self.get_concept()
 
     def __str__(self):
         return str(self.get_text())
