@@ -14,3 +14,8 @@ import pytest
 def jm_fixture():
     from src.jog_memory.jm import JogMemory
     return JogMemory()
+
+@pytest.fixture
+def rag_fixture():
+    from src.jog_memory.rag import JogRag
+    return JogRag()
