@@ -7,9 +7,9 @@ from src.jog_memory.jm import JogMemory
 from src.jog_memory.rag import JogRag
 
 
-n_ctx = 2048
-max_tokens = 256
-
+n_ctx = 2048 + 128
+max_tokens = 128 + 128
+k=4
 
 df = pd.read_csv('~/data/discharge_5000.csv')
 sample = df.sample(n=500) # 30
@@ -55,12 +55,13 @@ for subject_id in tqdm(subject_ids):
 
     # RAG if length of text exceeds context window size
     if len(jog_memory.get_text()) > (n_ctx-300):
-        docs = jog_rag.split_text(jog_memory.get_text(), subject_id, concept, expanded_concepts)
-        context = jog_rag.get_context(concept, expanded_concepts)
+        docs = jog_rag.split_text(jog_memory.get_text(), subject_id, concept, expanded_concepts, k=k)
+        context = jog_rag.get_context(concept, expanded_concepts, k=k)
     else:
         context = jog_memory.get_text()
 
     # Summarize the context
+    print(f"Context: {context}\n")
     print(f"Subject ID: {subject_id}, Main Concept: {concept}, Expanded Concepts: {expanded_concepts}")
     print("Traditional Summary: \n")
     print(jog_memory.summarize(context, concept))

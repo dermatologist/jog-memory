@@ -34,7 +34,7 @@ class JogRag:
     def split_text(self, text, subject_id, concept="", expanded_concepts=[], chunk_size=64, chunk_overlap=5, k=5, save_to_chroma=True):
         docs = []
         if self.n_ctx:
-            chunk_size = int((self.n_ctx-300) / k)
+            chunk_size = int((self.n_ctx-300) / (k*3))
             print(f"Chunk size: {chunk_size} \n")
         text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
             chunk_size=chunk_size, chunk_overlap=chunk_overlap
