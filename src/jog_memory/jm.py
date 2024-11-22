@@ -3,12 +3,11 @@ from huggingface_hub import hf_hub_download, snapshot_download
 from langchain_community.llms import LlamaCpp
 from langchain_core.callbacks import CallbackManager, StreamingStdOutCallbackHandler
 from langchain_core.prompts import PromptTemplate
-import pandas as pd
-from tqdm import tqdm
 from gensim.models import Word2Vec
 import re
 import tempfile
-
+import logging
+logging.getLogger("langchain_text_splitters.base").setLevel(logging.ERROR)
 
 class JogMemory:
 

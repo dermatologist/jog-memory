@@ -4,7 +4,6 @@ from langchain_text_splitters import CharacterTextSplitter
 from langchain.docstore.document import Document
 import os
 import shutil
-import re
 import logging
 logging.getLogger("langchain_text_splitters.base").setLevel(logging.ERROR)
 
