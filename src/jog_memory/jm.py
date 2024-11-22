@@ -21,6 +21,7 @@ class JogMemory:
                  max_tokens = 128, # The maximum number of tokens to generate
                  temperature = 0.1, # The temperature for sampling
                  theme_prompt = None,
+                 summary_prompt = None,
                  ):
         self.tempfile = tempfile.SpooledTemporaryFile(mode='a+t', max_size=10000)
         self.model_name = model_name
@@ -44,6 +45,7 @@ class JogMemory:
             verbose=True,  # Verbose is required to pass to the callback manager
         )
         self.theme_prompt = theme_prompt
+        self.summary_prompt = summary_prompt
         REPO_ID = "garyw/clinical-embeddings-100d-w2v-cr"
         FILENAME = "w2v_OA_CR_100d.bin"
         self.word_embedding = Word2Vec.load(snapshot_download(repo_id=REPO_ID)+"/"+FILENAME)
@@ -80,6 +82,17 @@ class JogMemory:
                 phrases.append(word.replace("_", " "))
         return phrases
 
+    def trim_after_last_period(self, sentence):
+        # Find the last occurrence of a period
+        last_period_index = sentence.rfind('.')
+
+        # If a period is found, trim the sentence after the last period
+        if last_period_index != -1:
+            return re.sub('\d', '*',sentence[:last_period_index + 1])
+        else:
+            # If no period is found, return the original sentence
+            return re.sub('\d', '*',sentence)
+
     def get_theme_prompt(self):
         if self.theme_prompt:
             return self.theme_prompt
@@ -93,6 +106,17 @@ class JogMemory:
         Main concept: hernia repair
         Text: {prompt}
         Main concept: """
+
+    def get_summary_prompt(self):
+        if self.summary_prompt:
+            return self.summary_prompt
+        return """
+        You are a clinician summarizing a patient's discharge summary.
+        Do not include your tasks or instructions.
+        Do not include name, date, or other identifying information.
+        Context: {prompt}
+        Summarize the above context in one paragraph for the theme(s): {concept} {expanded_concepts}
+        Summary:"""
 
     def clear_concept(self):
         self.concept = None
@@ -112,6 +136,17 @@ class JogMemory:
         self.clear_concept()
         self.set_concept(output.split('\n', 1)[0].strip())
         return self.get_concept()
+
+    def summarize(self, concept="", expanded_concepts=[]):
+        prompt = PromptTemplate.from_template(self.get_summary_prompt())
+        llm_chain = prompt | self.llm
+        text = self.get_text()
+        if len(text) > self.n_ctx:
+            text = text[:self.n_ctx - 300]
+            print("Text trimmed to fit context window. Please split text into smaller chunks or use RAG.")
+        text = self.get_text()[:self.n_ctx - 300]
+        output = llm_chain.invoke({"prompt": text, "concept": concept, "expanded_concepts": str(expanded_concepts)})
+        return self.trim_after_last_period(output)
 
     def __str__(self):
         return str(self.get_text())
