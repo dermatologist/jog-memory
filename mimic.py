@@ -47,7 +47,7 @@ def anonymize(summary, concept):
 count = 0
 # for seach subject_id
 for subject_id in subject_ids:
-    print(f"Subject ID: {subject_id}\n")
+    print(f"#{count+1}: Subject ID: {subject_id}\n")
     discharge_summaries = df[df['subject_id'] == subject_id]
     # if rows exceed 5, continue
     if discharge_summaries.shape[0] > 3:
