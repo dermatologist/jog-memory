@@ -104,7 +104,7 @@ class JogMemory:
         Text: The patient underwent hernia repair.
         Main concept: hernia repair
         Text: {prompt}
-        Main concept: """
+        Main concept:"""
 
     def get_summary_prompt(self):
         if self.summary_prompt:
@@ -133,7 +133,7 @@ class JogMemory:
         text = self.get_text()[:self.n_ctx - 300]
         output = llm_chain.invoke({"prompt": text})
         self.clear_concept()
-        self.set_concept(output.split('\n', 1)[0].strip())
+        self.set_concept(output.split(",|\n", 1)[0].strip())
         return self.get_concept()
 
     def summarize(self, concept="", expanded_concepts=[]):

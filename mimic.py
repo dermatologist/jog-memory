@@ -7,7 +7,7 @@ from src.jog_memory.jm import JogMemory
 from src.jog_memory.rag import JogRag
 
 
-n_ctx = 8000
+n_ctx = 3000
 max_tokens = 256
 
 
@@ -31,8 +31,8 @@ for index, row in tqdm(discharge_summaries.iterrows(), total=discharge_summaries
         jog_memory.append_text(alphaneumeric)
     else:
         # Main prodessing
-        # print(jog_memory.get_text())
-        # print(index, subject_id)
+        print(jog_memory.get_text())
+        print(index, subject_id)
 
         # identify main concept and expanded concepts
         concept = jog_memory.find_concept()
