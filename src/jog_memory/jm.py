@@ -132,7 +132,8 @@ class JogMemory:
         text = self.get_text()[:self.n_ctx - 300]
         output = llm_chain.invoke({"prompt": text})
         self.clear_concept()
-        self.set_concept(output.split(",|\n", 1)[0].strip())
+        output = re.split(r'\n|,', output)
+        self.set_concept(output[0].strip())
         return self.get_concept()
 
     def summarize(self, concept="", expanded_concepts=[]):

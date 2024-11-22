@@ -31,7 +31,7 @@ for index, row in tqdm(discharge_summaries.iterrows(), total=discharge_summaries
         jog_memory.append_text(alphaneumeric)
     else:
         # Main prodessing
-        print(jog_memory.get_text())
+        # print(jog_memory.get_text())
         print(index, subject_id)
 
         # identify main concept and expanded concepts

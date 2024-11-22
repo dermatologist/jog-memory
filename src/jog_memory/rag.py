@@ -43,6 +43,7 @@ class JogRag:
             )
         if save_to_chroma:
             self.save_to_chroma(docs, subject_id)
+        print(f"Split text into {len(docs)} documents.\n")
         return docs
 
     def get_context(self, concept="", expanded_concepts=[], k=5):
