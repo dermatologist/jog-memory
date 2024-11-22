@@ -34,6 +34,7 @@ class JogRag:
             chunk_size=chunk_size, chunk_overlap=chunk_overlap
         )
         split_docs = text_splitter.split_text(text)
+        print(f"Split {len(text)} long text into {len(docs)} documents.\n")
         for doc in split_docs:
             docs.append(
                 Document(
@@ -43,7 +44,6 @@ class JogRag:
             )
         if save_to_chroma:
             self.save_to_chroma(docs, subject_id)
-        print(f"Split text into {len(docs)} documents.\n")
         return docs
 
     def get_context(self, concept="", expanded_concepts=[], k=5):

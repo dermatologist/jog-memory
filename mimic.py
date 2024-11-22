@@ -26,12 +26,15 @@ jog_rag = JogRag()
 
 subject_id = 0
 for index, row in tqdm(discharge_summaries.iterrows(), total=discharge_summaries.shape[0]):
-    alphaneumeric = re.sub(r'\W+', ' ', row['text']).strip()
-    if subject_id != row['subject_id'] and subject_id != 0:
+    # alphaneumeric = re.sub(r'\W+', ' ', row['text']).strip()
+    alphaneumeric = row['text']
+    if subject_id != row['subject_id'] and subject_id == 0:
         jog_memory.append_text(alphaneumeric)
+        subject_id = row['subject_id']
     else:
         # Main prodessing
         # print(jog_memory.get_text())
+        print(f"Length of text: {len(jog_memory.get_text())}")
         print(index, subject_id)
 
         # identify main concept and expanded concepts
