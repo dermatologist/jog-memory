@@ -142,8 +142,10 @@ class JogMemory:
         llm_chain = prompt | self.llm
         original_length = len(text)
         if original_length > self.n_ctx:
-            text = text[:self.n_ctx - 300]
-            print(f"Text length: {original_length}, Trimmed length: {len(text)}")
+            text = text[:self.n_ctx - 30]
+            print(f"Text length: {original_length}, Trimmed length: {len(text)}\n")
+        else:
+            print(f"Text length: {original_length}\n")
         output = llm_chain.invoke({"prompt": text, "concept": concept, "expanded_concepts": ", ".join(expanded_concepts)})
         return self.trim_after_last_period(output)
 

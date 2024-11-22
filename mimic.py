@@ -7,9 +7,9 @@ from src.jog_memory.jm import JogMemory
 from src.jog_memory.rag import JogRag
 
 
-n_ctx = 2048 + 128
+n_ctx = 2048 + 256
 max_tokens = 128 + 128
-k=4
+k=5
 
 df = pd.read_csv('~/data/discharge_5000.csv')
 sample = df.sample(n=500) # 30
@@ -38,6 +38,7 @@ for subject_id in tqdm(subject_ids):
     jog_memory.clear_text()
     for index, row in tqdm(discharge_summaries.iterrows(), total=discharge_summaries.shape[0]):
         alphaneumeric = re.sub(r'\W+', ' ', row['text']).strip()
+        alphaneumeric = alphaneumeric.replace("_", "")
         jog_memory.append_text(alphaneumeric)
     # Main prodessing
     # print(jog_memory.get_text())
