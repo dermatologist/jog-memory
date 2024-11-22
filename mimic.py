@@ -90,7 +90,7 @@ for subject_id in subject_ids:
 
     # Save the summaries
     content = f"""
-    Subject ID: {subject_id} | Concept: {concept} | Expanded Concepts: {expanded_concepts}
+    #{count}. Subject ID: {subject_id} | Concept: {concept} | Expanded Concepts: {expanded_concepts}
 
     Default Summary:
     {traditional}
