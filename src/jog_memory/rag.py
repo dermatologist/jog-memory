@@ -59,6 +59,6 @@ class JogRag:
     def get_context(self, concept="", expanded_concepts=[], k=5):
         if self.db is None:
             return "No database found. Please run split_text() first."
-        results = self.db.similarity_search(concept + " " + ", ".join(expanded_concepts), k=k)
+        results = self.db.similarity_search(concept + " " + " ".join(expanded_concepts), k=k)
         context_text = "\n\n --- \n\n".join([result.page_content for result in results])
         return context_text
