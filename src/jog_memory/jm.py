@@ -87,10 +87,10 @@ class JogMemory:
 
         # If a period is found, trim the sentence after the last period
         if last_period_index != -1:
-            return re.sub('\d', '*',sentence[:last_period_index + 1])
+            return re.sub(r'\d', '*',sentence[:last_period_index + 1])
         else:
             # If no period is found, return the original sentence
-            return re.sub('\d', '*',sentence)
+            return re.sub(r'\d', '*',sentence)
 
     def get_theme_prompt(self):
         if self.theme_prompt:
