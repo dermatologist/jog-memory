@@ -7,14 +7,14 @@ from src.jog_memory.jm import JogMemory
 from src.jog_memory.rag import JogRag
 
 
-n_ctx = 3000
+n_ctx = 2048
 max_tokens = 256
 
 
 df = pd.read_csv('~/data/discharge_5000.csv')
 sample = df.sample(n=500) # 30
 subject_id = sample['subject_id'].unique()
-subject_id = subject_id[0:20]
+subject_id = subject_id[0:30]
 print(f"Subject IDs: {subject_id}")
 discharge_summaries = df[df['subject_id'].isin(subject_id)]
 

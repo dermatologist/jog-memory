@@ -96,8 +96,7 @@ class JogMemory:
         if self.theme_prompt:
             return self.theme_prompt
         return """
-        Identify the main diagnosis and/or procedure in the text in one or two words.
-        DO NOT include anything else in the response.
+        Identify ONLY the Main concept in the text in one or two words.
         Examples:
         Text: The patient was admitted for pneumonia.
         Main concept: pneumonia
