@@ -16,12 +16,8 @@ k=5
 df = pd.read_csv('~/data/discharge_5000.csv')
 sample = df.sample(n=500) # 30
 
-subject_id = sample['subject_id'].unique()
-
-# subject_id = sample['subject_id'].unique()
-subject_ids = subject_id[0:30]
-print(f"Subject IDs: {subject_id}")
-# discharge_summaries = df[df['subject_id'].isin(subject_id)]
+subject_ids = sample['subject_id'].unique()
+print(f"Subject IDs: {subject_ids}")
 
 jog_memory = JogMemory(
     n_ctx=n_ctx,
@@ -50,7 +46,8 @@ def anonymize(summary, concept):
 
 count = 0
 # for seach subject_id
-for subject_id in tqdm(subject_ids):
+for subject_id in subject_ids:
+    print(f"Subject ID: {subject_id}\n")
     discharge_summaries = df[df['subject_id'] == subject_id]
     # if rows exceed 5, continue
     if discharge_summaries.shape[0] > 3:
@@ -60,10 +57,8 @@ for subject_id in tqdm(subject_ids):
         alphaneumeric = re.sub(r'\W+', ' ', row['text']).strip()
         alphaneumeric = alphaneumeric.replace("_", "")
         jog_memory.append_text(alphaneumeric)
-    # Main prodessing
-    # print(jog_memory.get_text())
-    print(f"Length of text: {len(jog_memory.get_text())}")
-    print(index, subject_id)
+
+    print(f"Length of text: {len(jog_memory.get_text())}\n")
 
     # identify main concept and expanded concepts
     concept = jog_memory.find_concept()
@@ -85,7 +80,7 @@ for subject_id in tqdm(subject_ids):
     traditional = jog_memory.summarize(context, concept)
     expanded = jog_memory.summarize(context, concept, expanded_concepts)
     print(f"Context: {context}\n")
-    print(f"Subject ID: {subject_id}, Main Concept: {concept}, Expanded Concepts: {expanded_concepts}")
+    print(f"Subject ID: {subject_id}, Main Concept: {concept}, Expanded Concepts: {expanded_concepts}\n")
     print("Traditional Summary: \n")
     print(traditional)
     print("---------------------------------------------------------------\n\n")
