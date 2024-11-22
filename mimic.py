@@ -52,6 +52,7 @@ for subject_id in tqdm(subject_ids):
     if concept == "" or len(expanded_concepts) == 0:
         continue
 
+
     # RAG if length of text exceeds context window size
     if len(jog_memory.get_text()) > (n_ctx-300):
         docs = jog_rag.split_text(jog_memory.get_text(), subject_id, concept, expanded_concepts)
@@ -62,8 +63,8 @@ for subject_id in tqdm(subject_ids):
     # Summarize the context
     print(f"Subject ID: {subject_id}, Main Concept: {concept}, Expanded Concepts: {expanded_concepts}")
     print("Traditional Summary: \n")
-    print(jog_memory.summarize(concept))
+    print(jog_memory.summarize(context, concept))
     print("---------------------------------------------------------------\n\n")
     print("Expanded Summary: \n")
-    print(jog_memory.summarize(concept, expanded_concepts))
+    print(jog_memory.summarize(context, concept, expanded_concepts))
     print("---------------------------------------------------------------\n\n")

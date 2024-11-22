@@ -62,6 +62,7 @@ class JogMemory:
         self.tempfile.truncate()
 
     def expand_concept(self, concept):
+        concept = concept.lower().strip().replace(" ", "_")
         # if _concept is not a list, convert it to a list
         if not isinstance(concept, list):
             concepts = [concept]
@@ -113,7 +114,7 @@ class JogMemory:
         Do not include your tasks or instructions.
         Do not include name, date, or other identifying information.
         Context: {prompt}
-        Summarize the above context in one paragraph for the theme(s): {concept} {expanded_concepts}
+        Summarize the above context in one paragraph for the theme(s): {concept}, {expanded_concepts}
         Summary:"""
 
     def clear_concept(self):
@@ -136,15 +137,14 @@ class JogMemory:
         self.set_concept(output[0].strip())
         return self.get_concept()
 
-    def summarize(self, concept="", expanded_concepts=[]):
+    def summarize(self, text, concept="", expanded_concepts=[]):
         prompt = PromptTemplate.from_template(self.get_summary_prompt())
         llm_chain = prompt | self.llm
-        text = self.get_text()
-        if len(text) > self.n_ctx:
+        original_length = len(text)
+        if original_length > self.n_ctx:
             text = text[:self.n_ctx - 300]
-            print("Text trimmed to fit context window. Please split text into smaller chunks or use RAG.")
-        text = self.get_text()[:self.n_ctx - 300]
-        output = llm_chain.invoke({"prompt": text, "concept": concept, "expanded_concepts": str(expanded_concepts)})
+            print(f"Text length: {original_length}, Trimmed length: {len(text)}")
+        output = llm_chain.invoke({"prompt": text, "concept": concept, "expanded_concepts": ", ".join(expanded_concepts)})
         return self.trim_after_last_period(output)
 
     def __str__(self):
