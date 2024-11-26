@@ -1,4 +1,6 @@
 import click
+from . import JogMemory
+from . import JogRag
 try:
     from . import __version__
 except ImportError:
@@ -12,6 +14,7 @@ except ImportError:
 def cli(verbose, file, theme):
     if verbose:
         print("verbose")
+
 
 
 def main_routine():
