@@ -1,4 +1,5 @@
 import click
+from pypdf import PdfReader
 from . import JogMemory
 from . import JogRag
 try:
@@ -21,8 +22,13 @@ def cli(verbose, file, theme, n_ctx, max_tokens, k, n_gpu_layers, expand, clear)
     if verbose:
         click.echo("verbose")
     if file: # if file is provided, read the file
-        with open(file, 'r') as f:
-            text = f.read()
+        # if file is pdf
+        if file.endswith('.pdf'):
+            pdf = PdfReader(file)
+            text = ' '.join([page.text for page in pdf.pages])
+        else:
+            with open(file, 'r') as f:
+                text = f.read()
     else:
         text = click.prompt("Enter text to summarize", type=str)
     n_ctx = n_ctx
