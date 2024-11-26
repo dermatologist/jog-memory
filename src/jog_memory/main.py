@@ -9,7 +9,7 @@ except ImportError:
 
 @click.command()
 @click.option('--verbose', '-v', is_flag=True, help="Will print verbose messages.")
-@click.option('--file', '-f', is_flag=True, help="Text file to summarize.")
+@click.option('--file', '-f', help="Text file to summarize.")
 @click.option('--theme', '-t', multiple=False, default='auto',
               help='Theme for summarization (default: auto)')
 @click.option('--n_ctx', '-c', multiple=False, default=2048 + 256, help='Context window size')
@@ -25,7 +25,9 @@ def cli(verbose, file, theme, n_ctx, max_tokens, k, n_gpu_layers, expand, clear)
         # if file is pdf
         if file.endswith('.pdf'):
             pdf = PdfReader(file)
-            text = ' '.join([page.text for page in pdf.pages])
+            text = ""
+            for page in pdf.pages:
+                text = text + " " + page.extract_text()
         else:
             with open(file, 'r') as f:
                 text = f.read()
@@ -48,11 +50,11 @@ def cli(verbose, file, theme, n_ctx, max_tokens, k, n_gpu_layers, expand, clear)
         jog_memory.clear_text()
     jog_memory.append_text(text)
     if theme == 'auto':
-        theme = jog_memory.find_concept(text)
-        click.echo(f"Theme: {theme}")
+        theme = jog_memory.find_concept(text[:n_ctx-300])
+        click.secho(f"Theme: {theme}\n", fg='yellow')
     if expand:
         expanded = jog_memory.expand_concept(theme)
-        click.echo(f"Expanded concepts: {expanded}")
+        click.secho(f"Expanded concepts: {expanded}\n", fg='yellow')
     else:
         expanded = ""
     # RAG if length of text exceeds context window size
