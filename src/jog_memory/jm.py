@@ -8,7 +8,7 @@ import re
 import tempfile
 import logging
 logging.getLogger("langchain_text_splitters.base").setLevel(logging.ERROR)
-
+from .log import suppress_stdout_stderr
 class JogMemory:
 
     def __init__(self,
@@ -33,22 +33,23 @@ class JogMemory:
         self.model_path = hf_hub_download(self.model_name, filename=self.model_file)
         # Callbacks support token-wise streaming
         self.callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
-        self.llm = LlamaCpp(
-            model_path=self.model_path,  # Download the model file first
-            n_gpu_layers=self.n_gpu_layers,
-            n_batch=self.n_batch,
-            n_ctx=self.n_ctx,  # The context window size
-            max_tokens=self.max_tokens,  # The maximum number of tokens to generate
-            temperature=self.temperature,  # The temperature for sampling
-            callback_manager=self.callback_manager,
-            verbose=True,  # Verbose is required to pass to the callback manager
-        )
-        self.theme_prompt = theme_prompt
-        self.summary_prompt = summary_prompt
-        REPO_ID = "garyw/clinical-embeddings-100d-w2v-cr"
-        FILENAME = "w2v_OA_CR_100d.bin"
-        self.word_embedding = Word2Vec.load(snapshot_download(repo_id=REPO_ID)+"/"+FILENAME)
-        self.concept = None
+        with suppress_stdout_stderr():
+            self.llm = LlamaCpp(
+                model_path=self.model_path,  # Download the model file first
+                n_gpu_layers=self.n_gpu_layers,
+                n_batch=self.n_batch,
+                n_ctx=self.n_ctx,  # The context window size
+                max_tokens=self.max_tokens,  # The maximum number of tokens to generate
+                temperature=self.temperature,  # The temperature for sampling
+                callback_manager=self.callback_manager,
+                verbose=True,  # Verbose is required to pass to the callback manager
+            )
+            self.theme_prompt = theme_prompt
+            self.summary_prompt = summary_prompt
+            REPO_ID = "garyw/clinical-embeddings-100d-w2v-cr"
+            FILENAME = "w2v_OA_CR_100d.bin"
+            self.word_embedding = Word2Vec.load(snapshot_download(repo_id=REPO_ID)+"/"+FILENAME)
+            self.concept = None
 
     def append_text(self, text):
         self.tempfile.write(text)
