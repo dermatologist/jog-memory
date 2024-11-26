@@ -12,6 +12,7 @@ except ImportError:
 @click.command()
 @click.option('--verbose', '-v', is_flag=True, help="Will print verbose messages.")
 @click.option('--file', '-f', help="Text file to summarize.")
+@click.option('output', '--output', '-o', help="Output file to save the summary.")
 @click.option('--theme', '-t', multiple=False, default='auto',
               help='Theme for summarization (default: auto)')
 @click.option('--n_ctx', '-c', multiple=False, default=2048 + 256, help='Context window size')
@@ -20,9 +21,7 @@ except ImportError:
 @click.option('--n_gpu_layers', '-g', multiple=False, default=-1, help='Number of GPU layers')
 @click.option('--expand', '-e', is_flag=True, help="Expand the summary")
 @click.option('--clear', '-x', is_flag=True, help="Clear the text")
-def cli(verbose, file, theme, n_ctx, max_tokens, k, n_gpu_layers, expand, clear):
-    if verbose:
-        click.echo("verbose")
+def cli(verbose, file, output, theme, n_ctx, max_tokens, k, n_gpu_layers, expand, clear):
     if file: # if file is provided, read the file
         # if file is pdf
         if file.endswith('.pdf'):
@@ -66,9 +65,16 @@ def cli(verbose, file, theme, n_ctx, max_tokens, k, n_gpu_layers, expand, clear)
     else:
         context = jog_memory.get_text()
     click.secho(f"Summarizing: ....\n", fg='yellow')
-    with suppress_stdout_stderr():
+    if verbose:
+        click.secho(f"Context: {context}\n", fg='yellow')
         summary = jog_memory.summarize(context, theme, expanded)
+    else:
+        with suppress_stdout_stderr():
+            summary = jog_memory.summarize(context, theme, expanded)
     click.secho(f"Summary: {summary}\n", fg='green')
+    if output:
+        with open(output, 'w') as f:
+            f.write(summary)
 
 def main_routine():
     click.echo("_________________________________________")
