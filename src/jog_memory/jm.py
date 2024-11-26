@@ -4,6 +4,7 @@ from langchain_community.llms import LlamaCpp
 from langchain_core.callbacks import CallbackManager, StreamingStdOutCallbackHandler
 from langchain_core.prompts import PromptTemplate
 from gensim.models import Word2Vec
+import click
 import re
 import tempfile
 import logging
@@ -72,13 +73,13 @@ class JogMemory:
         words = []
         phrases = []
         for concept in concepts:
-            print(f"Concept: {concept}")
+            click.secho(f"Concept: {concept}", fg='yellow')
             try:
                 words.extend(self.word_embedding.wv.most_similar(concept, topn=10))
             except:
                 pass
         for (word, score) in words:
-            print(f"Word: {word}, Score: {score}")
+            click.secho(f"Word: {word}, Score: {score}", fg='bright_blue')
             if score > 0.75:
                 phrases.append(word.replace("_", " "))
         return phrases
@@ -145,9 +146,9 @@ class JogMemory:
         original_length = len(text)
         if original_length > self.n_ctx:
             text = text[:self.n_ctx - 30]
-            print(f"Text length: {original_length}, Trimmed length: {len(text)}\n")
+            click.echo(f"Text length: {original_length}, Trimmed length: {len(text)}\n")
         else:
-            print(f"Text length: {original_length}\n")
+            click.echo(f"Text length: {original_length}\n")
         output = llm_chain.invoke({"prompt": text, "concept": concept, "expanded_concepts": ", ".join(expanded_concepts)})
         return self.trim_after_last_period(output)
 

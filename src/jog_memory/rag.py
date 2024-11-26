@@ -2,6 +2,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
+import click
 import os
 import shutil
 import logging
@@ -35,12 +36,12 @@ class JogRag:
         docs = []
         if self.n_ctx:
             chunk_size = int(self.n_ctx / (k*5))
-            print(f"Chunk size: {chunk_size} \n")
+            click.secho(f"Chunk size: {chunk_size} \n", fg='red')
         text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
             chunk_size=chunk_size, chunk_overlap=chunk_overlap
         )
         split_docs = text_splitter.split_text(text)
-        print(f"Split {len(text)} long text into {len(split_docs)} documents.\n")
+        click.secho(f"Split {len(text)} long text into {len(split_docs)} documents.\n", fg='red')
         for doc in split_docs:
             docs.append(
                 Document(

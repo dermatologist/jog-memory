@@ -2,6 +2,8 @@ import click
 from pypdf import PdfReader
 from . import JogMemory
 from . import JogRag
+from .log import suppress_stdout_stderr
+
 try:
     from . import __version__
 except ImportError:
@@ -63,11 +65,14 @@ def cli(verbose, file, theme, n_ctx, max_tokens, k, n_gpu_layers, expand, clear)
         context = jog_rag.get_context(theme, expanded, k=k)
     else:
         context = jog_memory.get_text()
-    click.secho(f"Summary: {jog_memory.summarize(context, theme, expanded)}\n", fg='green')
+    click.secho(f"Summarizing: ....\n", fg='yellow')
+    with suppress_stdout_stderr():
+        summary = jog_memory.summarize(context, theme, expanded)
+    click.secho(f"Summary: {summary}\n", fg='green')
 
 def main_routine():
     click.echo("_________________________________________")
-    click.echo("Jog Memory Summary v " + __version__ + " working:.....")
+    click.secho("Jog Memory Summary:  working: ......", fg='green')
     cli()  # run the main function
     click.echo("Summarization complete.")
 
