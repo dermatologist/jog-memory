@@ -127,10 +127,11 @@ class JogMemory:
     def get_concept(self):
         return self.concept
 
-    def find_concept(self):
+    def find_concept(self, text=None):
         prompt = PromptTemplate.from_template(self.get_theme_prompt())
         llm_chain = prompt | self.llm
-        text = self.get_text()[:self.n_ctx - 300]
+        if text is None:
+            text = self.get_text()[:self.n_ctx - 300]
         output = llm_chain.invoke({"prompt": text})
         self.clear_concept()
         output = re.split(r'\n|,', output)
