@@ -1,5 +1,6 @@
 import click
 from pypdf import PdfReader
+import requests
 from . import JogMemory
 from . import JogRag
 from .log import suppress_stdout_stderr
@@ -29,6 +30,10 @@ def cli(verbose, file, output, theme, n_ctx, max_tokens, k, n_gpu_layers, expand
             text = ""
             for page in pdf.pages:
                 text = text + " " + page.extract_text()
+        # if file is url
+        elif file.startswith('http'):
+            response = requests.get(file)
+            text = response.text
         else:
             with open(file, 'r') as f:
                 text = f.read()
