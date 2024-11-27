@@ -112,7 +112,7 @@ class JogMemory:
         if self.summary_prompt:
             return self.summary_prompt
         return """
-        You are a clinician summarizing a patient's discharge summary.
+        You are a clinician summarizing a patient's clinical note.
         Do not include your tasks or instructions.
         Do not include name, date, or other identifying information.
         Context: {prompt}
