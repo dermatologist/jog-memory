@@ -140,9 +140,11 @@ class JogMemory:
         self.set_concept(output[0].strip())
         return self.get_concept()
 
-    def summarize(self, text, concept="", expanded_concepts=[]):
+    def summarize(self, text=None, concept="", expanded_concepts=[]):
         prompt = PromptTemplate.from_template(self.get_summary_prompt())
         llm_chain = prompt | self.llm
+        if text is None:
+            text = self.get_text()
         original_length = len(text)
         if original_length > self.n_ctx:
             text = text[:self.n_ctx - 30]

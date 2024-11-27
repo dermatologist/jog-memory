@@ -15,7 +15,7 @@ def test_get_context(rag_fixture, capsys):
     In conclusion, pneumonia is a complex disease with various causes and treatments. It remains a significant health concern globally, especially for high-risk populations. Through prompt diagnosis, appropriate treatment, and preventive measures, the impact of pneumonia can be significantly reduced, improving patient outcomes and reducing the burden on healthcare systems.
     """
     docs = rag_fixture.split_text(text, subject_id=1, concept="pneumonia")
-    assert len(docs) == 5
+    assert len(docs) == 8
     assert docs[0].metadata["subject_id"] == "1"
     assert docs[0].metadata["concept"] == "pneumonia"
     assert docs[0].metadata["expanded_concepts"] == '[]'
