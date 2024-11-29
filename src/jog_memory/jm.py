@@ -113,10 +113,10 @@ class JogMemory:
             return self.summary_prompt
         return """
         You are a clinician summarizing a patient's clinical note.
-        Do not include your tasks or instructions.
-        Do not include name, date, or other identifying information.
+        Do not repeat information or add information that is not in the context.
+        Summarize the below context in one paragraph for the theme: {concept}
+        Comment on {expanded_concepts} IF they are present in the context.
         Context: {prompt}
-        Summarize the above context in one paragraph for the theme(s): {concept}, {expanded_concepts}
         Summary:"""
 
     def clear_concept(self):
