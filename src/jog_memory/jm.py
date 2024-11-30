@@ -22,6 +22,7 @@ class JogMemory:
                  temperature = 0.1, # The temperature for sampling
                  theme_prompt = None,
                  summary_prompt = None,
+                 expanded_prompt = None,
                  ):
         self.tempfile = tempfile.SpooledTemporaryFile(mode='a+t', max_size=10000)
         self.model_name = model_name
@@ -47,6 +48,7 @@ class JogMemory:
             )
             self.theme_prompt = theme_prompt
             self.summary_prompt = summary_prompt
+            self.expanded_prompt = expanded_prompt
             REPO_ID = "garyw/clinical-embeddings-100d-w2v-cr"
             FILENAME = "w2v_OA_CR_100d.bin"
             self.word_embedding = Word2Vec.load(snapshot_download(repo_id=REPO_ID)+"/"+FILENAME)
@@ -114,8 +116,18 @@ class JogMemory:
         return """
         You are a clinician summarizing a patient's clinical note.
         Do not repeat information or add information that is not in the context.
-        Summarize the below context in one paragraph for the theme: {concept}
+        Summarize the below context in a single paragraph for the theme: {concept}
+        Context: {prompt}
+        Summary:"""
+
+    def get_expanded_prompt(self):
+        if self.expanded_prompt:
+            return self.expanded_prompt
+        return """
+        You are a clinician summarizing a patient's clinical note.
+        Do not repeat information or add information that is not in the context.
         Comment on {expanded_concepts} IF they are present in the context.
+        Summarize the below context in a single paragraph for the theme: {concept}
         Context: {prompt}
         Summary:"""
 
@@ -142,7 +154,9 @@ class JogMemory:
 
     def summarize(self, text=None, concept="", expanded_concepts=[]):
         prompt = PromptTemplate.from_template(self.get_summary_prompt())
+        expanded_prompt = PromptTemplate.from_template(self.get_expanded_prompt())
         llm_chain = prompt | self.llm
+        expanded_chain = expanded_prompt | self.llm
         if text is None:
             text = self.get_text()
         original_length = len(text)
@@ -151,7 +165,10 @@ class JogMemory:
             click.echo(f"Text length: {original_length}, Trimmed length: {len(text)}\n")
         else:
             click.echo(f"Text length: {original_length}\n")
-        output = llm_chain.invoke({"prompt": text, "concept": concept, "expanded_concepts": ", ".join(expanded_concepts)})
+        if len(expanded_concepts) > 0:
+            output = expanded_chain.invoke({"prompt": text, "concept": concept, "expanded_concepts": ", ".join(expanded_concepts)})
+        else:
+            output = llm_chain.invoke({"prompt": text, "concept": concept})
         return self.trim_after_last_period(output)
 
     def __str__(self):
