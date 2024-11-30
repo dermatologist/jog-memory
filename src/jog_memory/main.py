@@ -37,8 +37,10 @@ except ImportError:
 @click.option('--k', '-k', multiple=False, default=5, help='Number of documents to retrieve')
 @click.option('--n_gpu_layers', '-g', multiple=False, default=-1, help='Number of GPU layers')
 @click.option('--expand', '-e', is_flag=True, help="Expand the summary")
+@click.option('--llm', '-l', help="LLM model (default: mradermacher/Llama3-Med42-8B-GGUF)")
+@click.option('--embedding', '-b', help="Embedding file (default: garyw/clinical-embeddings-100d-w2v-cr)")
 @click.option('--clear', '-x', is_flag=True, help="Clear the text")
-def cli(verbose, file, output, theme, n_ctx, max_tokens, k, n_gpu_layers, expand, clear):
+def cli(verbose, file, output, theme, n_ctx, max_tokens, k, n_gpu_layers, expand, llm, embedding, clear):
     if file: # if file is provided, read the file
         # if file is pdf
         if file.endswith('.pdf'):
@@ -61,6 +63,8 @@ def cli(verbose, file, output, theme, n_ctx, max_tokens, k, n_gpu_layers, expand
     n_gpu_layers = n_gpu_layers
 
     jog_memory = JogMemory(
+        model_path=llm,
+        embedding_path=embedding,
         n_ctx=n_ctx,
         max_tokens=max_tokens,
         n_gpu_layers=n_gpu_layers,

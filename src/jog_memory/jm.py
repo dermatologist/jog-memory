@@ -29,6 +29,7 @@ from langchain_core.prompts import PromptTemplate
 logging.getLogger("langchain_text_splitters.base").setLevel(logging.ERROR)
 from .log import suppress_stdout_stderr
 
+logger = logging.getLogger(__name__)
 
 class JogMemory:
 
@@ -51,8 +52,10 @@ class JogMemory:
         self.max_tokens = max_tokens
         self.temperature = temperature
         if model_path is None:
+            logger.info(f"Downloading the default model.")
             self.model_path = hf_hub_download("mradermacher/Llama3-Med42-8B-GGUF", filename="Llama3-Med42-8B.Q8_0.gguf")
         else:
+            logger.info(f"Loading model from {model_path}.")
             self.model_path = model_path
         # Callbacks support token-wise streaming
         self.callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
@@ -73,8 +76,10 @@ class JogMemory:
             if embedding_path is None:
                 REPO_ID = "garyw/clinical-embeddings-100d-w2v-cr"
                 FILENAME = "w2v_OA_CR_100d.bin"
+                logger.info(f"Loading default embedding.")
                 self.word_embedding = Word2Vec.load(snapshot_download(repo_id=REPO_ID)+"/"+FILENAME)
             else:
+                logger.info(f"Loading embedding from {embedding_path}.")
                 self.word_embedding = Word2Vec.load(embedding_path)
             self.concept = None
 
