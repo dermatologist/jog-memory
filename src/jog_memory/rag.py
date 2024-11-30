@@ -1,13 +1,30 @@
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain.docstore.document import Document
-import click
+"""
+ Copyright 2024 Bell Eapen
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+"""
+
+import logging
 import os
 import shutil
-import logging
-logging.getLogger("langchain_text_splitters.base").setLevel(logging.ERROR)
 
+import click
+from langchain.docstore.document import Document
+from langchain_community.vectorstores import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+logging.getLogger("langchain_text_splitters.base").setLevel(logging.ERROR)
 
 class JogRag:
 
@@ -27,8 +44,6 @@ class JogRag:
             self.embeddings,
             persist_directory=self.CHROMA_PATH + f"/{subject_id}",
         )
-        # db.persist()
-        # print(f"Saved to {CHROMA_PATH + f'/{subject_id}'}")
         self.db = db
         return db
 

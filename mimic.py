@@ -1,5 +1,4 @@
 # Summarize randomly selected notes from the MIMIC-IV dataset.
-
 import pandas as pd
 from tqdm import tqdm
 import re
@@ -8,12 +7,11 @@ import os
 from src.jog_memory.jm import JogMemory
 from src.jog_memory.rag import JogRag
 
-
 n_ctx = 2048 + 256
 max_tokens = 128 + 128
 k=5
 
-df = pd.read_csv('~/data/discharge_5000.csv')
+df = pd.read_csv('~/data/discharge_5000.csv') # Path to the MIMIC-IV dataset
 sample = df.sample(n=500) # 30
 
 subject_ids = sample['subject_id'].unique()
@@ -26,7 +24,6 @@ jog_memory = JogMemory(
 jog_rag = JogRag(
     n_ctx=n_ctx,
 )
-
 # Anominize and save the summaries
 def anonymize(summary, concept):
     first = random.choice([0,1])
