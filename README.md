@@ -12,16 +12,9 @@
 
 # jog-memory
 
-> Jog Memory summarization of clinical documents
+> Jog Memory is a proof of concept package for domain adapted summarization of clinical documents
 
-`jog-memory` is a Python package designed to summarize clinical documents using LLMs (Large Language Models) and embeddings. It leverages pre-trained models and embeddings to provide accurate and concise summaries of clinical notes. More to come after review.
-
-## Features
-
-- Summarize clinical documents with ease.
-- Expand summaries with additional concepts.
-- Supports PDF, webpages and text files.
-- Utilizes pre-trained models and embeddings for better results.
+`jog-memory` is a Python package designed to summarize clinical documents using LLMs (Large Language Models) and word embeddings for domain adaptation. More to come after review.
 
 ## Installation
 
@@ -72,11 +65,9 @@ jms --file path/to/your/file.txt --expand
 - `--embedding` or `-b`: Embedding file (default: garyw/clinical-embeddings-100d-w2v-cr).
 - `--clear` or `-x`: Clear the text.
 
-
 ## Contributing
 
 Contributions are welcome! Please see the [`CONTRIBUTING.md`](CONTRIBUTING.md ) file for more information.
-
 
 ## Citation
 
