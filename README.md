@@ -26,7 +26,10 @@ pip install git+https://github.com/dermatologist/jog-memory.git
 
 ## Usage
 
-After installing the package, you can use the command-line interface (CLI) to summarize clinical documents. Below are some examples of how to use the CLI.
+After installing the package, you can use the command-line interface (CLI) to summarize clinical documents with concept expansion using LLMs and
+custom trained word embeddings. Use [`train.py`](train.py) to train your own word embeddings.
+
+Below are some examples of how to use the CLI.
 
 
 ### Summarize a PDF File
