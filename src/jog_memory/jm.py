@@ -39,7 +39,7 @@ class JogMemory:
         self,
         model_path: str = None,  # Use the default model if None
         embedding_path: str = None,  # Use the default embedding if None
-        n_gpu_layers=-1,  # The number of layers to put on the GPU. The rest will be on the CPU. If you don't know how many layers there are, you can use -1 to move all to GPU. 0 for all on CPU.
+        n_gpu_layers=0,  # The number of layers to put on the GPU. The rest will be on the CPU. If you don't know how many layers there are, you can use -1 to move all to GPU. 0 for all on CPU.
         n_batch=256,  # Should be between 1 and n_ctx, consider the amount of VRAM in your GPU.
         n_ctx=2048,  # The context window size
         max_tokens=128,  # The maximum number of tokens to generate
