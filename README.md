@@ -56,10 +56,13 @@ To expand the summary with additional concepts, use the `--expand` option:
 jms --file path/to/your/file.txt --expand
 ```
 
-### Additional Options
+###  Options
 
 - `--verbose` or `-v`: Print verbose messages.
+- `--file` or `-f`: Input file.
+- `--output` or `-o`: Output file.
 - `--theme` or `-t`: Theme for summarization (default: auto).
+- `--expand` or `-e`: Perform concept expansion.
 - `--n_ctx` or `-c`: Context window size (default: 2304).
 - `--max_tokens` or `-m`: Max tokens to generate (default: 256).
 - `--k` or `-k`: Number of documents to retrieve (default: 5).
